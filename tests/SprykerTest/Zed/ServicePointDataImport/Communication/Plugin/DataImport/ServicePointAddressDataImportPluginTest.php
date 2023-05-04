@@ -11,8 +11,7 @@ use Codeception\Test\Unit;
 use Generated\Shared\Transfer\DataImporterConfigurationTransfer;
 use Generated\Shared\Transfer\DataImporterReaderConfigurationTransfer;
 use Generated\Shared\Transfer\ServicePointTransfer;
-use Generated\Shared\Transfer\StoreTransfer;
-use Spryker\Zed\ServicePointDataImport\Communication\Plugin\DataImport\ServicePointStoreDataImportPlugin;
+use Spryker\Zed\ServicePointDataImport\Communication\Plugin\DataImport\ServicePointAddressDataImportPlugin;
 use SprykerTest\Zed\ServicePointDataImport\ServicePointDataImportCommunicationTester;
 
 /**
@@ -24,10 +23,10 @@ use SprykerTest\Zed\ServicePointDataImport\ServicePointDataImportCommunicationTe
  * @group Communication
  * @group Plugin
  * @group DataImport
- * @group ServicePointStoreDataImportPluginTest
+ * @group ServicePointAddressDataImportPluginTest
  * Add your own group annotations below this line
  */
-class ServicePointStoreDataImportPluginTest extends Unit
+class ServicePointAddressDataImportPluginTest extends Unit
 {
     /**
      * @var \SprykerTest\Zed\ServicePointDataImport\ServicePointDataImportCommunicationTester
@@ -53,22 +52,19 @@ class ServicePointStoreDataImportPluginTest extends Unit
         $this->tester->haveServicePoint([ServicePointTransfer::KEY => 'sp1']);
         $this->tester->haveServicePoint([ServicePointTransfer::KEY => 'sp2']);
 
-        $this->tester->haveStore([StoreTransfer::NAME => 'DE']);
-        $this->tester->haveStore([StoreTransfer::NAME => 'AT']);
-
         $dataImporterReaderConfigurationTransfer = (new DataImporterReaderConfigurationTransfer())
-            ->setFileName(codecept_data_dir() . 'import/service_point_store.csv');
+            ->setFileName(codecept_data_dir() . 'import/service_point_address.csv');
 
         $dataImporterConfigurationTransfer = (new DataImporterConfigurationTransfer())
             ->setReaderConfiguration($dataImporterReaderConfigurationTransfer);
 
         // Act
-        $servicePointStoreDataImportPlugin = new ServicePointStoreDataImportPlugin();
-        $dataImporterReportTransfer = $servicePointStoreDataImportPlugin->import($dataImporterConfigurationTransfer);
+        $servicePointAddressDataImportPlugin = new ServicePointAddressDataImportPlugin();
+        $dataImporterReportTransfer = $servicePointAddressDataImportPlugin->import($dataImporterConfigurationTransfer);
 
         // Assert
         $this->assertTrue($dataImporterReportTransfer->getIsSuccess());
-        $this->assertCount(4, $this->tester->getServicePointStoreQuery());
+        $this->assertCount(2, $this->tester->getServicePointAddressQuery());
     }
 
     /**
@@ -77,12 +73,12 @@ class ServicePointStoreDataImportPluginTest extends Unit
     public function testGetImportTypeReturnsExpectedType(): void
     {
         // Arrange
-        $servicePointStoreDataImportPlugin = new ServicePointStoreDataImportPlugin();
+        $servicePointAddressDataImportPlugin = new ServicePointAddressDataImportPlugin();
 
         // Act
-        $importType = $servicePointStoreDataImportPlugin->getImportType();
+        $importType = $servicePointAddressDataImportPlugin->getImportType();
 
         // Assert
-        $this->assertSame('service-point-store', $importType);
+        $this->assertSame('service-point-address', $importType);
     }
 }
