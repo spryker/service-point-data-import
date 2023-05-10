@@ -5,24 +5,16 @@
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
-namespace Spryker\Zed\ServicePointDataImport\Business\DataImportStep\ServicePoint;
+namespace Spryker\Zed\ServicePointDataImport\Business\DataImportStep\ServicePointService;
 
-use Orm\Zed\ServicePoint\Persistence\SpyServicePointQuery;
+use Orm\Zed\ServicePoint\Persistence\SpyServicePointServiceQuery;
 use Spryker\Zed\DataImport\Business\Exception\InvalidDataException;
 use Spryker\Zed\DataImport\Business\Model\DataImportStep\DataImportStepInterface;
-use Spryker\Zed\DataImport\Business\Model\DataImportStep\PublishAwareStep;
 use Spryker\Zed\DataImport\Business\Model\DataSet\DataSetInterface;
-use Spryker\Zed\ServicePointDataImport\Business\DataSet\ServicePointDataSetInterface;
+use Spryker\Zed\ServicePointDataImport\Business\DataSet\ServicePointServiceDataSetInterface;
 
-class ServicePointWriteDataImportStep extends PublishAwareStep implements DataImportStepInterface
+class ServicePointServiceWriteDataImportStep implements DataImportStepInterface
 {
-    /**
-     * @uses \Spryker\Shared\ServicePointSearch\ServicePointSearchConfig::SERVICE_POINT_PUBLISH
-     *
-     * @var string
-     */
-    protected const SERVICE_POINT_PUBLISH = 'ServicePoint.service_point.publish';
-
     /**
      * @param \Spryker\Zed\DataImport\Business\Model\DataSet\DataSetInterface $dataSet
      *
@@ -32,15 +24,18 @@ class ServicePointWriteDataImportStep extends PublishAwareStep implements DataIm
     {
         $this->assertDataSet($dataSet);
 
-        $servicePointEntity = $this->getServicePointQuery()
-            ->filterByKey($dataSet[ServicePointDataSetInterface::COLUMN_KEY])
+        /** @var string $servicePointServiceKey */
+        $servicePointServiceKey = $dataSet[ServicePointServiceDataSetInterface::COLUMN_KEY];
+
+        $servicePointServiceEntity = $this->getServicePointServiceQuery()
+            ->filterByKey($servicePointServiceKey)
+            ->filterByFkServicePoint($dataSet[ServicePointServiceDataSetInterface::COLUMN_ID_SERVICE_POINT])
+            ->filterByFkServiceType($dataSet[ServicePointServiceDataSetInterface::COLUMN_ID_SERVICE_TYPE])
             ->findOneOrCreate();
 
-        $servicePointEntity
+        $servicePointServiceEntity
             ->fromArray($dataSet->getArrayCopy())
             ->save();
-
-        $this->addPublishEvents(static::SERVICE_POINT_PUBLISH, $servicePointEntity->getIdServicePoint());
     }
 
     /**
@@ -62,10 +57,10 @@ class ServicePointWriteDataImportStep extends PublishAwareStep implements DataIm
     }
 
     /**
-     * @return \Orm\Zed\ServicePoint\Persistence\SpyServicePointQuery
+     * @return \Orm\Zed\ServicePoint\Persistence\SpyServicePointServiceQuery
      */
-    protected function getServicePointQuery(): SpyServicePointQuery
+    protected function getServicePointServiceQuery(): SpyServicePointServiceQuery
     {
-        return SpyServicePointQuery::create();
+        return SpyServicePointServiceQuery::create();
     }
 }

@@ -11,8 +11,8 @@ use Codeception\Test\Unit;
 use Generated\Shared\Transfer\DataImporterConfigurationTransfer;
 use Generated\Shared\Transfer\DataImporterReaderConfigurationTransfer;
 use Generated\Shared\Transfer\ServicePointTransfer;
-use Generated\Shared\Transfer\StoreTransfer;
-use Spryker\Zed\ServicePointDataImport\Communication\Plugin\DataImport\ServicePointStoreDataImportPlugin;
+use Generated\Shared\Transfer\ServiceTypeTransfer;
+use Spryker\Zed\ServicePointDataImport\Communication\Plugin\DataImport\ServicePointServiceDataImportPlugin;
 use SprykerTest\Zed\ServicePointDataImport\ServicePointDataImportCommunicationTester;
 
 /**
@@ -24,17 +24,17 @@ use SprykerTest\Zed\ServicePointDataImport\ServicePointDataImportCommunicationTe
  * @group Communication
  * @group Plugin
  * @group DataImport
- * @group ServicePointStoreDataImportPluginTest
+ * @group ServicePointServiceDataImportPluginTest
  * Add your own group annotations below this line
  */
-class ServicePointStoreDataImportPluginTest extends Unit
+class ServicePointServiceDataImportPluginTest extends Unit
 {
     /**
-     * * @uses \Spryker\Zed\ServicePointDataImport\ServicePointDataImportConfig::IMPORT_TYPE_SERVICE_POINT_STORE
+     * * @uses \Spryker\Zed\ServicePointDataImport\ServicePointDataImportConfig::IMPORT_TYPE_SERVICE_POINT_SERVICE
      *
      * @var string
      */
-    protected const IMPORT_TYPE_SERVICE_POINT_STORE = 'service-point-store';
+    protected const IMPORT_TYPE_SERVICE_POINT_SERVICE = 'service-point-service';
 
     /**
      * @var \SprykerTest\Zed\ServicePointDataImport\ServicePointDataImportCommunicationTester
@@ -57,39 +57,45 @@ class ServicePointStoreDataImportPluginTest extends Unit
     public function testImportImportsData(): void
     {
         // Arrange
-        $this->tester->haveServicePoint([ServicePointTransfer::KEY => 'sp1']);
-        $this->tester->haveServicePoint([ServicePointTransfer::KEY => 'sp2']);
+        $this->tester->haveServicePoint([
+            ServicePointTransfer::KEY => 'sp1',
+        ]);
 
-        $this->tester->haveStore([StoreTransfer::NAME => 'DE']);
-        $this->tester->haveStore([StoreTransfer::NAME => 'AT']);
+        $this->tester->haveServicePoint([
+            ServicePointTransfer::KEY => 'sp2',
+        ]);
+
+        $this->tester->haveServiceType([
+            ServiceTypeTransfer::KEY => 'pickup',
+        ]);
 
         $dataImporterReaderConfigurationTransfer = (new DataImporterReaderConfigurationTransfer())
-            ->setFileName(codecept_data_dir() . 'import/service_point_store.csv');
+            ->setFileName(codecept_data_dir() . 'import/service_point_service.csv');
 
-        $dataImporterConfigurationTransfer = (new DataImporterConfigurationTransfer())
+        $dataImportConfigurationTransfer = (new DataImporterConfigurationTransfer())
             ->setReaderConfiguration($dataImporterReaderConfigurationTransfer);
 
         // Act
-        $servicePointStoreDataImportPlugin = new ServicePointStoreDataImportPlugin();
-        $dataImporterReportTransfer = $servicePointStoreDataImportPlugin->import($dataImporterConfigurationTransfer);
+        $servicePointServiceDataImportPlugin = new ServicePointServiceDataImportPlugin();
+        $dataImporterReportTransfer = $servicePointServiceDataImportPlugin->import($dataImportConfigurationTransfer);
 
         // Assert
         $this->assertTrue($dataImporterReportTransfer->getIsSuccess());
-        $this->assertCount(4, $this->tester->getServicePointStoreQuery());
+        $this->assertCount(2, $this->tester->getServicePointServiceQuery());
     }
 
     /**
      * @return void
      */
-    public function testGetImportTypeReturnsExpectedType(): void
+    public function testGetImportPointServiceReturnsExpectedType(): void
     {
         // Arrange
-        $servicePointStoreDataImportPlugin = new ServicePointStoreDataImportPlugin();
+        $servicePointServiceDataImportPlugin = new ServicePointServiceDataImportPlugin();
 
         // Act
-        $importType = $servicePointStoreDataImportPlugin->getImportType();
+        $importType = $servicePointServiceDataImportPlugin->getImportType();
 
         // Assert
-        $this->assertSame(static::IMPORT_TYPE_SERVICE_POINT_STORE, $importType);
+        $this->assertSame(static::IMPORT_TYPE_SERVICE_POINT_SERVICE, $importType);
     }
 }
