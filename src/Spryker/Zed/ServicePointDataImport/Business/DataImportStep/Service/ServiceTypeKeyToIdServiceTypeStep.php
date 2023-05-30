@@ -5,7 +5,7 @@
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
-namespace Spryker\Zed\ServicePointDataImport\Business\DataImportStep\ServicePointService;
+namespace Spryker\Zed\ServicePointDataImport\Business\DataImportStep\Service;
 
 use Orm\Zed\ServicePoint\Persistence\Map\SpyServiceTypeTableMap;
 use Orm\Zed\ServicePoint\Persistence\SpyServiceTypeQuery;
@@ -13,7 +13,7 @@ use Spryker\Zed\DataImport\Business\Exception\EntityNotFoundException;
 use Spryker\Zed\DataImport\Business\Exception\InvalidDataException;
 use Spryker\Zed\DataImport\Business\Model\DataImportStep\DataImportStepInterface;
 use Spryker\Zed\DataImport\Business\Model\DataSet\DataSetInterface;
-use Spryker\Zed\ServicePointDataImport\Business\DataSet\ServicePointServiceDataSetInterface;
+use Spryker\Zed\ServicePointDataImport\Business\DataSet\ServiceDataSetInterface;
 
 class ServiceTypeKeyToIdServiceTypeStep implements DataImportStepInterface
 {
@@ -32,11 +32,11 @@ class ServiceTypeKeyToIdServiceTypeStep implements DataImportStepInterface
     public function execute(DataSetInterface $dataSet): void
     {
         /** @var string $serviceTypeKey */
-        $serviceTypeKey = $dataSet[ServicePointServiceDataSetInterface::COLUMN_SERVICE_TYPE_KEY];
+        $serviceTypeKey = $dataSet[ServiceDataSetInterface::COLUMN_SERVICE_TYPE_KEY];
 
         if (!$serviceTypeKey) {
             throw new InvalidDataException(
-                sprintf('"%s" is required.', ServicePointServiceDataSetInterface::COLUMN_SERVICE_TYPE_KEY),
+                sprintf('"%s" is required.', ServiceDataSetInterface::COLUMN_SERVICE_TYPE_KEY),
             );
         }
 
@@ -44,7 +44,7 @@ class ServiceTypeKeyToIdServiceTypeStep implements DataImportStepInterface
             $this->serviceTypeIdsIndexedByKey[$serviceTypeKey] = $this->getIdServiceTypeByKey($serviceTypeKey);
         }
 
-        $dataSet[ServicePointServiceDataSetInterface::COLUMN_ID_SERVICE_TYPE] = $this->serviceTypeIdsIndexedByKey[$serviceTypeKey];
+        $dataSet[ServiceDataSetInterface::COLUMN_ID_SERVICE_TYPE] = $this->serviceTypeIdsIndexedByKey[$serviceTypeKey];
     }
 
     /**

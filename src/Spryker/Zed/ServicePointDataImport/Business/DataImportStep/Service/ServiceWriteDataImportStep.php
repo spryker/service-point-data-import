@@ -5,15 +5,15 @@
  * For full license information, please view the LICENSE file that was distributed with this source code.
  */
 
-namespace Spryker\Zed\ServicePointDataImport\Business\DataImportStep\ServicePointService;
+namespace Spryker\Zed\ServicePointDataImport\Business\DataImportStep\Service;
 
-use Orm\Zed\ServicePoint\Persistence\SpyServicePointServiceQuery;
+use Orm\Zed\ServicePoint\Persistence\SpyServiceQuery;
 use Spryker\Zed\DataImport\Business\Exception\InvalidDataException;
 use Spryker\Zed\DataImport\Business\Model\DataImportStep\DataImportStepInterface;
 use Spryker\Zed\DataImport\Business\Model\DataSet\DataSetInterface;
-use Spryker\Zed\ServicePointDataImport\Business\DataSet\ServicePointServiceDataSetInterface;
+use Spryker\Zed\ServicePointDataImport\Business\DataSet\ServiceDataSetInterface;
 
-class ServicePointServiceWriteDataImportStep implements DataImportStepInterface
+class ServiceWriteDataImportStep implements DataImportStepInterface
 {
     /**
      * @param \Spryker\Zed\DataImport\Business\Model\DataSet\DataSetInterface $dataSet
@@ -24,16 +24,16 @@ class ServicePointServiceWriteDataImportStep implements DataImportStepInterface
     {
         $this->assertDataSet($dataSet);
 
-        /** @var string $servicePointServiceKey */
-        $servicePointServiceKey = $dataSet[ServicePointServiceDataSetInterface::COLUMN_KEY];
+        /** @var string $serviceKey */
+        $serviceKey = $dataSet[ServiceDataSetInterface::COLUMN_KEY];
 
-        $servicePointServiceEntity = $this->getServicePointServiceQuery()
-            ->filterByKey($servicePointServiceKey)
-            ->filterByFkServicePoint($dataSet[ServicePointServiceDataSetInterface::COLUMN_ID_SERVICE_POINT])
-            ->filterByFkServiceType($dataSet[ServicePointServiceDataSetInterface::COLUMN_ID_SERVICE_TYPE])
+        $serviceEntity = $this->getServiceQuery()
+            ->filterByKey($serviceKey)
+            ->filterByFkServicePoint($dataSet[ServiceDataSetInterface::COLUMN_ID_SERVICE_POINT])
+            ->filterByFkServiceType($dataSet[ServiceDataSetInterface::COLUMN_ID_SERVICE_TYPE])
             ->findOneOrCreate();
 
-        $servicePointServiceEntity
+        $serviceEntity
             ->fromArray($dataSet->getArrayCopy())
             ->save();
     }
@@ -57,10 +57,10 @@ class ServicePointServiceWriteDataImportStep implements DataImportStepInterface
     }
 
     /**
-     * @return \Orm\Zed\ServicePoint\Persistence\SpyServicePointServiceQuery
+     * @return \Orm\Zed\ServicePoint\Persistence\SpyServiceQuery
      */
-    protected function getServicePointServiceQuery(): SpyServicePointServiceQuery
+    protected function getServiceQuery(): SpyServiceQuery
     {
-        return SpyServicePointServiceQuery::create();
+        return SpyServiceQuery::create();
     }
 }

@@ -18,11 +18,11 @@ use Spryker\Zed\ServicePointDataImport\ServicePointDataImportConfig;
  * @method \Spryker\Zed\ServicePointDataImport\ServicePointDataImportConfig getConfig()
  * @method \Spryker\Zed\ServicePointDataImport\Communication\ServicePointDataImportCommunicationFactory getFactory()
  */
-class ServicePointServiceDataImportPlugin extends AbstractPlugin implements DataImportPluginInterface
+class ServiceDataImportPlugin extends AbstractPlugin implements DataImportPluginInterface
 {
     /**
      * {@inheritDoc}
-     * - Imports service point services data from the specified file.
+     * - Imports services data from the specified file.
      * - Iterates over the data sets the data at Persistence.
      *
      * @api
@@ -33,7 +33,7 @@ class ServicePointServiceDataImportPlugin extends AbstractPlugin implements Data
      */
     public function import(?DataImporterConfigurationTransfer $dataImporterConfigurationTransfer = null): DataImporterReportTransfer
     {
-        return $this->getFacade()->importServicePointServices($dataImporterConfigurationTransfer);
+        return $this->getFacade()->importServices($dataImporterConfigurationTransfer);
     }
 
     /**
@@ -45,6 +45,6 @@ class ServicePointServiceDataImportPlugin extends AbstractPlugin implements Data
      */
     public function getImportType(): string
     {
-        return ServicePointDataImportConfig::IMPORT_TYPE_SERVICE_POINT_SERVICE;
+        return ServicePointDataImportConfig::IMPORT_TYPE_SERVICE;
     }
 }

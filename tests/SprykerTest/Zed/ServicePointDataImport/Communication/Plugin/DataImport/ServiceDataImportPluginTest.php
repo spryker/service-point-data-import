@@ -12,7 +12,7 @@ use Generated\Shared\Transfer\DataImporterConfigurationTransfer;
 use Generated\Shared\Transfer\DataImporterReaderConfigurationTransfer;
 use Generated\Shared\Transfer\ServicePointTransfer;
 use Generated\Shared\Transfer\ServiceTypeTransfer;
-use Spryker\Zed\ServicePointDataImport\Communication\Plugin\DataImport\ServicePointServiceDataImportPlugin;
+use Spryker\Zed\ServicePointDataImport\Communication\Plugin\DataImport\ServiceDataImportPlugin;
 use SprykerTest\Zed\ServicePointDataImport\ServicePointDataImportCommunicationTester;
 
 /**
@@ -24,17 +24,17 @@ use SprykerTest\Zed\ServicePointDataImport\ServicePointDataImportCommunicationTe
  * @group Communication
  * @group Plugin
  * @group DataImport
- * @group ServicePointServiceDataImportPluginTest
+ * @group ServiceDataImportPluginTest
  * Add your own group annotations below this line
  */
-class ServicePointServiceDataImportPluginTest extends Unit
+class ServiceDataImportPluginTest extends Unit
 {
     /**
-     * * @uses \Spryker\Zed\ServicePointDataImport\ServicePointDataImportConfig::IMPORT_TYPE_SERVICE_POINT_SERVICE
+     * * @uses \Spryker\Zed\ServicePointDataImport\ServicePointDataImportConfig::IMPORT_TYPE_SERVICE
      *
      * @var string
      */
-    protected const IMPORT_TYPE_SERVICE_POINT_SERVICE = 'service-point-service';
+    protected const IMPORT_TYPE_SERVICE = 'service';
 
     /**
      * @var \SprykerTest\Zed\ServicePointDataImport\ServicePointDataImportCommunicationTester
@@ -70,18 +70,18 @@ class ServicePointServiceDataImportPluginTest extends Unit
         ]);
 
         $dataImporterReaderConfigurationTransfer = (new DataImporterReaderConfigurationTransfer())
-            ->setFileName(codecept_data_dir() . 'import/service_point_service.csv');
+            ->setFileName(codecept_data_dir() . 'import/service.csv');
 
         $dataImportConfigurationTransfer = (new DataImporterConfigurationTransfer())
             ->setReaderConfiguration($dataImporterReaderConfigurationTransfer);
 
         // Act
-        $servicePointServiceDataImportPlugin = new ServicePointServiceDataImportPlugin();
-        $dataImporterReportTransfer = $servicePointServiceDataImportPlugin->import($dataImportConfigurationTransfer);
+        $serviceDataImportPlugin = new ServiceDataImportPlugin();
+        $dataImporterReportTransfer = $serviceDataImportPlugin->import($dataImportConfigurationTransfer);
 
         // Assert
         $this->assertTrue($dataImporterReportTransfer->getIsSuccess());
-        $this->assertCount(2, $this->tester->getServicePointServiceQuery());
+        $this->assertCount(2, $this->tester->getServiceQuery());
     }
 
     /**
@@ -90,12 +90,12 @@ class ServicePointServiceDataImportPluginTest extends Unit
     public function testGetImportPointServiceReturnsExpectedType(): void
     {
         // Arrange
-        $servicePointServiceDataImportPlugin = new ServicePointServiceDataImportPlugin();
+        $serviceDataImportPlugin = new ServiceDataImportPlugin();
 
         // Act
-        $importType = $servicePointServiceDataImportPlugin->getImportType();
+        $importType = $serviceDataImportPlugin->getImportType();
 
         // Assert
-        $this->assertSame(static::IMPORT_TYPE_SERVICE_POINT_SERVICE, $importType);
+        $this->assertSame(static::IMPORT_TYPE_SERVICE, $importType);
     }
 }

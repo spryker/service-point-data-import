@@ -7,7 +7,7 @@
 
 namespace Spryker\Zed\ServicePointDataImport\Business\DataSet;
 
-interface ServicePointServiceDataSetInterface
+interface ServiceDataSetInterface
 {
     /**
      * @var string
